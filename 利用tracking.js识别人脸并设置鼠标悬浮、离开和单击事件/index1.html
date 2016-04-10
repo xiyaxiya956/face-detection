@@ -1,0 +1,62 @@
+<!doctype html> 
+<html> 
+<head> 
+<meta charset="utf-8"> 
+<title>只识别脸部</title> 
+<!-- 从github中下载tracking.js工程并且抽取build文件夹，将其改为js文件夹后放在适当位置 -->
+<script src="js/tracking-min.js"></script> 
+<script src="js/data/face-min.js"></script> 
+ 
+<style> 
+  .rect {  /*重写类库样式*/
+    border: 2px solid #a64ceb;  
+    left: -1000px;  
+    position: absolute;  
+    top: -1000px;  
+  }  
+ 
+  #img {  
+    position: absolute;  
+    top: 50%;  
+    left: 50%;  
+    margin: -173px 0 0 -300px;  
+  }  
+</style> 
+
+<!-- tracking code.   -->
+<script> 
+    window.onload = function(){  
+      var img = document.getElementById('img');  
+      // tracking.ObjectTracker()方法对你想要进行跟踪的对象进行了分类，它可以接受一个数组作为参数.
+      var tracker = new tracking.ObjectTracker('face'); //只保留脸部识别，删除eye和mouth识别
+      // setStepSize() 指定的块的步进大小.
+      tracker.setStepSize(1.7);  
+   
+      tracking.track('#img', tracker);  //设置追踪的图片
+   
+      tracker.on('track', function(event) {  //设置追踪事件执行的函数
+        event.data.forEach(function(rect) {  
+          draw(rect.x, rect.y, rect.width, rect.height);  //循环绘制人脸
+        });  
+      });  
+   
+      function draw(x, y, w, h) {  
+        var rect = document.createElement('div');  
+        document.querySelector('.imgContainer').appendChild(rect);  
+        rect.classList.add('rect');  
+        rect.style.width = w + 'px';  
+        rect.style.height = h + 'px';  
+        rect.style.left = (img.offsetLeft + x) + 'px';  
+        rect.style.top = (img.offsetTop + y) + 'px';  
+      };  
+    };  
+  </script> 
+
+</head> 
+<body> 
+  <div class="imgContainer"> 
+    <img id="img" src="assets/face.jpg" /> 
+  </div> 
+ 
+</body> 
+</html> 
